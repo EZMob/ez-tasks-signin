@@ -17,8 +17,8 @@
 </head>
 <body>
 <main>
-  <h1>Sign in to EZ-Tasks</h1>
-  <p>Use the work email on your EZ-Tasks employee profile. We will email you a sign-in link.</p>
+  <h1 id="title">Sign in to EZ-Tasks</h1>
+  <p id="intro">Use the work email on your EZ-Tasks employee profile. We will email you a sign-in link.</p>
   <form method="post" action="https://tyjtsirlwcfntnshtgfl.supabase.co/functions/v1/tasks-mcp/authorize">
     <label for="email">Work email</label>
     <input id="email" name="email" type="email" autocomplete="email" required>
@@ -28,13 +28,14 @@
   </form>
 </main>
 <script>
-  const requestId = new URLSearchParams(location.search).get('request') || '';
+  const params = new URLSearchParams(location.search);
+  const requestId = params.get('request') || '';
+  const errorText = params.get('error') || '';
   const valid = /^[0-9a-f-]{36}$/i.test(requestId);
-  if (!valid) {
+  if (errorText || !valid) {
+    document.getElementById('title').textContent = 'Sign-in failed';
+    document.getElementById('intro').textContent = errorText || 'This sign-in link is invalid. Start again from your AI tool.';
     document.querySelector('form').hidden = true;
-    const error = document.getElementById('error');
-    error.hidden = false;
-    error.textContent = 'This sign-in link is invalid. Start again from Claude.';
   } else {
     document.getElementById('request_id').value = requestId;
   }
